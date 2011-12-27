@@ -6,7 +6,7 @@
 %wrappers for server calls
 start() -> gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 add(What, Data) ->gen_server:call(?MODULE, {add, What, Data}).
-median(What) -> gen_server:call(?MODULE, {median, What}).
+stats(What) -> gen_server:call(?MODULE, {stats, What}).
 
 init([]) ->
 	Datastore = dict:new(),
@@ -24,25 +24,25 @@ handle_call({add, What, Data}, _From, Datastore) ->
 			{reply, ok, Datastore2}
 	end;
 	
-handle_call({median, What}, _From, Datastore) ->
-	Median = get_median(What, Datastore),
-	{reply, Median , Datastore}.
+handle_call({stats, What}, _From, Datastore) ->
+	Stats = get_stats(What, Datastore),
+	{reply, Stats , Datastore}.
 
 %
-% get_median/2
+% get_stats/2
 %
-get_median(What, Datastore) ->
+get_stats(What, Datastore) ->
 	Currentdata = dict:fetch(What, Datastore),
-	get_median(Currentdata).	
+	get_stats(Currentdata).	
 	
 %
-% get_median/1
+% get_stats/1
 %
 
-get_median([]) ->
+get_stats([]) ->
 	void;
 
-get_median(Currentdata)	->
+get_stats(Currentdata)	->
 	Currentdatasorted = lists:sort(Currentdata),
 	Size = length(Currentdata),
 	P50 = round(Size/2),

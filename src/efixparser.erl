@@ -10,7 +10,7 @@
 start() ->
 	statsserver:start(),
 
-	Count = 1000000,
+	Count = 100000,
 
 	times(Count, fun()-> 
 					{T,_} = 
@@ -20,7 +20,7 @@ start() ->
 					statsserver:add(fixtime, T)
 	             end),
 
-	io:format("Sync parsing: Median,P95,P98 =~p~n", [statsserver:median(fixtime)]),
+	io:format("Sync parsing: Median,P95,P98 =~p~n", [statsserver:stats(fixtime)]),
 	void.
 
 
@@ -80,7 +80,7 @@ print_parsed([]) ->
 	void;
 
 print_parsed([H|T]) ->
-	io:format("~p~n", [H]),
+	%io:format("~p~n", [H]),
 	print_parsed(T).	
 
 
