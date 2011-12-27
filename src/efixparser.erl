@@ -1,7 +1,6 @@
 -module(efixparser).
 -compile(export_all).
-%-compile('hipe, [o3]').
--include_lib("xmerl/include/xmerl.hrl").
+-compile([native,{hipe, [o3]}]).
 
 
 -define(TESTFIXMESSAGE, "8=FIX4.2\00135=D\00149=ABC\00156=DEF\00134=1234\00118=1\00121=2\00138=100\00144=22.5\00140=1\00159=3\00110=100\001").
@@ -10,17 +9,18 @@
 start() ->
 	statsserver:start(),
 
-	Count = 100000,
+	Count = 500000,
 
-	times(Count, fun()-> 
-					{T,_} = 
-						timer:tc ( 
-							?MODULE, parse, [?TESTFIXMESSAGE, lookingforstart, []]
-						),
-					statsserver:add(fixtime, T)
-	             end),
+	times(Count, 
+		fun()-> 
+			{T,_} = 
+			timer:tc ( 
+				?MODULE, parse, [?TESTFIXMESSAGE, lookingforstart, []]
+			),
+			statsserver:add(T)
+	    end),
 
-	io:format("Sync parsing: Median,P95,P98 =~p~n", [statsserver:stats(fixtime)]),
+	io:format("Sync parsing: Median,P95,P98 =~p~n", [statsserver:stats()]),
 	void.
 
 
@@ -28,6 +28,7 @@ times(0, F) ->
 	void;
 
 times(N, F) ->
+	%io:format("~p~n", [N]),
 	F(),
 	times(N-1, F).
 	
@@ -36,7 +37,6 @@ times(N, F) ->
 % parse/3
 %
 parse([], lookingforstart , Dict) ->
-	print_parsed(Dict),
 	void;
 
 parse([$8|T], lookingforstart, Dict) ->
@@ -51,7 +51,7 @@ parse([H|T], lookingforstart, Dict) ->
 % parse/4
 %
 parse([], intag, _,  Dict) ->
-	print_parsed(Dict),
+	%print_parsed(Dict),
 	void;
 
 parse([$=|T], intag, Tag, Dict) ->
