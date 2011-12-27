@@ -2,7 +2,6 @@
 -compile(export_all).
 -compile([native,{hipe, [o3]}]).
 -behavior(gen_server).
--include_lib("xmerl/include/xmerl.hrl").
 
 %wrappers for server calls
 start() -> gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
@@ -17,16 +16,6 @@ init([]) ->
 	{ok, {Datastore, Datalist}}.
 
 handle_call({add, What, Data}, _From, {Datastore,Datalist}) ->
-
-	%case  dict:is_key(What, Datastore) of
-	%	true ->
-	%		Currentdata = dict:fetch(What, Datastore),
-	%		Datastore1 = dict:append(What, Data, Datastore),
-	%		{reply, ok, Datastore1};
-	%	false ->
-	%		Datastore2 = dict:append(What, [Data], Datastore),
-	%		{reply, ok, Datastore2}
-	%end;
 	Datastore2 = dict:append(What, Data, Datastore),
 	{reply, ok, {Datastore2, Datalist}};
 
@@ -62,6 +51,12 @@ get_stats(Currentdata)	->
 	P50 = round(Size/2),
 	P95 = round(Size*0.95),
 	P98 = round(Size*0.98),
-	{lists:nth(P50, Currentdatasorted),lists:nth(P95, Currentdatasorted),lists:nth(P98, Currentdatasorted)} .
+	{Size, 
+	 lists:nth(1, Currentdatasorted),
+	 lists:nth(P50, Currentdatasorted),
+	 lists:nth(P95, Currentdatasorted),
+	 lists:nth(P98, Currentdatasorted),
+	 lists:nth(Size, Currentdatasorted)
+	 } .
 	
 

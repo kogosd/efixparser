@@ -9,7 +9,7 @@
 start() ->
 	statsserver:start(),
 
-	Count = 500000,
+	Count = 1000000,
 
 	times(Count, 
 		fun()-> 
@@ -20,7 +20,7 @@ start() ->
 			statsserver:add(T)
 	    end),
 
-	io:format("Sync parsing: Median,P95,P98 =~p~n", [statsserver:stats()]),
+	io:format("Sync parsing: {Size,Min,Median,P95,P98,Max}=~p~n", [statsserver:stats()]),
 	void.
 
 
@@ -40,7 +40,7 @@ parse([], lookingforstart , Dict) ->
 	void;
 
 parse([$8|T], lookingforstart, Dict) ->
-	parse(T, intag, $8, Dict);
+	parse(T, intag, [$8], Dict);
 
 parse([H|T], lookingforstart, Dict) ->
 	parse(T, lookingforstart, Dict).
@@ -69,7 +69,7 @@ parse([1|T], invalue, Tag, Value, Dict) ->
 	parse(T, intag, [], Dict1);
 	
 parse([H|T], invalue, Tag, Value, Dict) ->
-	parse(T, invalue, Tag, Value ++ [H] , Dict).
+	parse(T, invalue, Tag,  Value ++ [H] , Dict).
 
 
 
