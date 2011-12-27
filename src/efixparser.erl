@@ -7,18 +7,6 @@
 -define(TESTFIXMESSAGE, "8=FIX4.2\00135=D\00149=ABC\00156=DEF\00134=1234\00118=1\00121=2\00138=100\00144=22.5\00140=1\00159=3\00110=100\001").
 
 
-start_() ->
-	io:format("Will parse ~p~n", [?TESTFIXMESSAGE]),
-	{Megaseconds0,Seconds0,Microseconds0} = erlang:now(),
-
-	Count = 1000,
-	times(Count, fun()-> Dict = [], parse(?TESTFIXMESSAGE, lookingforstart, Dict) end),
-
-	{Megaseconds1,Seconds1,Microseconds1} = erlang:now(),
-	io:format("It took ~p usec per run~n", [(Megaseconds1*1000000000000 - Megaseconds0*1000000000000 + Seconds1*1000000 - Seconds0*1000000 + Microseconds1 - Microseconds0)/Count]),
-	void.
-
-
 start() ->
 	statsserver:start(),
 
