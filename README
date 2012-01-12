@@ -1,2 +1,2 @@
 This is a simple FIX message parser written in Erlang.
-It parses a typical FIX message in 1 microsecond on my iMac.
+It parses a typical FIX message in 1 microsecond on the iMac.
